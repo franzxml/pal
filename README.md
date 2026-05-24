@@ -3,6 +3,8 @@
 * Slash command `/musik` untuk mengontrol koneksi voice dasar
 * Slash command `/play` untuk memutar audio dari URL YouTube
 * Slash command `/stop` untuk menghentikan audio yang sedang diputar
+* Slash command `/queue` untuk melihat antrean musik
+* Sistem antrean musik per server agar `/play` berikutnya menunggu lagu aktif selesai
 * Aksi musik `gabung` untuk membuat bot masuk ke voice channel pengguna
 * Aksi musik `keluar` untuk membuat bot keluar dari voice channel
 * Aksi musik `status` untuk mengecek koneksi voice bot
@@ -110,9 +112,11 @@
    /musik
    /play
    /stop
+   /queue
    ```
 
    Untuk `/musik gabung` dan `/play`, pastikan pengguna sudah berada di voice channel.
+   Jika audio sedang diputar, command `/play` berikutnya akan otomatis masuk antrean.
 
 ## Script
 * `npm install` untuk menginstall dependensi runtime Node.js.

@@ -10,6 +10,7 @@ class VoiceRegistryTest < Minitest::Test
     registry.register(123, connection)
 
     assert registry.connected?(123)
+    assert_same connection, registry.fetch(123)
     assert_same connection, registry.delete(123)
     refute registry.connected?(123)
   end

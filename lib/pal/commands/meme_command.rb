@@ -5,7 +5,7 @@ module Pal
     class MemeCommand
       NAME = :meme
       DESCRIPTION = "Kirim meme acak ke kanal ini.".freeze
-      ERROR_MESSAGE = "Maaf, Pal gagal mengambil meme sekarang.".freeze
+      ERROR_MESSAGE = "Maaf, PAL gagal mengambil meme sekarang.".freeze
 
       def initialize(bot:, config:, meme_catalog: MemeCatalog)
         @bot = bot

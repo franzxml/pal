@@ -8,7 +8,11 @@ module Pal
   class Bot
     def initialize(config: Config.from_env)
       @config = config
-      @bot = Discordrb::Bot.new(token: config.token, client_id: config.client_id)
+      @bot = Discordrb::Bot.new(
+        token: config.token,
+        client_id: config.client_id,
+        intents: [:servers, :server_voice_states]
+      )
       @voice_registry = VoiceRegistry.new
     end
 
@@ -22,12 +26,14 @@ module Pal
     def register_commands
       Commands::MemeCommand.new(bot: @bot, config: @config).register
       Commands::MusicCommand.new(bot: @bot, config: @config, voice_registry: @voice_registry).register
+      Commands::PlayCommand.new(bot: @bot, config: @config, voice_registry: @voice_registry).register
+      Commands::StopCommand.new(config: @config, bot: @bot, voice_registry: @voice_registry).register
       register_ready_log
     end
 
     def register_ready_log
       @bot.ready do |event|
-        puts "Pal is online as #{event.bot.profile.distinct}"
+        puts "PAL is online as #{event.bot.profile.distinct}"
       end
     end
   end

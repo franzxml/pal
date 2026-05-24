@@ -12,6 +12,10 @@ module Pal
       @connections.delete(guild_id)
     end
 
+    def fetch(guild_id)
+      @connections[guild_id]
+    end
+
     def connected?(guild_id)
       @connections.key?(guild_id)
     end

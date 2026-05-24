@@ -2,10 +2,10 @@ module Pal
   module Commands
     class MusicCommand
       NAME = :musik
-      DESCRIPTION = "Kontrol fitur musik Pal.".freeze
+      DESCRIPTION = "Kontrol fitur musik PAL.".freeze
       OPTION_NAME = "aksi".freeze
       DEFAULT_ACTION = "gabung".freeze
-      ERROR_MESSAGE = "Maaf, Pal gagal menjalankan perintah musik.".freeze
+      ERROR_MESSAGE = "Maaf, PAL gagal menjalankan perintah musik.".freeze
 
       ACTIONS = {
         "gabung" => "Masuk ke voice channel kamu.",
@@ -73,27 +73,32 @@ module Pal
           return
         end
 
-        connection = @bot.voice_connect(voice_channel)
-        @voice_registry.register(guild_key(event), connection)
-        event.respond(content: "Pal sudah masuk ke #{voice_channel.name}. Fitur pemutaran audio siap ditambahkan di tahap berikutnya.")
+        event.respond(content: "PAL sedang mencoba masuk ke #{voice_channel.name}.")
+
+        Thread.new do
+          connection = @bot.voice_connect(voice_channel)
+          @voice_registry.register(guild_key(event), connection)
+        rescue StandardError => error
+          warn "Failed to join voice channel: #{error.class}: #{error.message}"
+        end
       end
 
       def leave_voice_channel(event)
         connection = @voice_registry.delete(guild_key(event))
         unless connection
-          event.respond(content: "Pal belum tersambung ke voice channel di server ini.")
+          event.respond(content: "PAL belum tersambung ke voice channel di server ini.")
           return
         end
 
         connection.destroy if connection.respond_to?(:destroy)
-        event.respond(content: "Pal sudah keluar dari voice channel.")
+        event.respond(content: "PAL sudah keluar dari voice channel.")
       end
 
       def music_status(event)
         if @voice_registry.connected?(guild_key(event))
-          event.respond(content: "Pal sedang tersambung ke voice channel.")
+          event.respond(content: "PAL sedang tersambung ke voice channel.")
         else
-          event.respond(content: "Pal belum tersambung ke voice channel. Jalankan `/musik gabung` dari voice channel.")
+          event.respond(content: "PAL belum tersambung ke voice channel. Jalankan `/musik gabung` dari voice channel.")
         end
       end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Pal
   module MemeCatalog
     MEMES = [

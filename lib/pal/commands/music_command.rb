@@ -1,6 +1,12 @@
+# frozen_string_literal: true
+
+require "pal/commands/command_helpers"
+
 module Pal
   module Commands
     class MusicCommand
+      include CommandHelpers
+
       NAME = :musik
       DESCRIPTION = "Kontrol fitur musik PAL.".freeze
       OPTION_NAME = "aksi".freeze
@@ -45,13 +51,6 @@ module Pal
       end
 
       private
-
-      def option_value(event, name)
-        return nil unless event.respond_to?(:options)
-
-        option = event.options[name] || event.options[name.to_sym]
-        option.respond_to?(:value) ? option.value : option
-      end
 
       def handle(event, action)
         case action
@@ -99,14 +98,6 @@ module Pal
           event.respond(content: "PAL sedang tersambung ke voice channel.")
         else
           event.respond(content: "PAL belum tersambung ke voice channel. Jalankan `/musik gabung` dari voice channel.")
-        end
-      end
-
-      def guild_key(event)
-        if event.respond_to?(:server) && event.server
-          event.server.id
-        else
-          event.channel.id
         end
       end
     end

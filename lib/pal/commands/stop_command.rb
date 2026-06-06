@@ -1,6 +1,12 @@
+# frozen_string_literal: true
+
+require "pal/commands/command_helpers"
+
 module Pal
   module Commands
     class StopCommand
+      include CommandHelpers
+
       NAME = :stop
       DESCRIPTION = "Hentikan audio yang sedang diputar PAL.".freeze
 
@@ -25,16 +31,6 @@ module Pal
         rescue StandardError => error
           warn "Failed to handle /stop: #{error.class}: #{error.message}"
           event.respond(content: "Maaf, PAL gagal menghentikan playback.")
-        end
-      end
-
-      private
-
-      def guild_key(event)
-        if event.respond_to?(:server) && event.server
-          event.server.id
-        else
-          event.channel.id
         end
       end
     end

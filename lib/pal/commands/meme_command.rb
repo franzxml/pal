@@ -1,8 +1,13 @@
+# frozen_string_literal: true
+
 require "pal/meme_catalog"
+require "pal/commands/command_helpers"
 
 module Pal
   module Commands
     class MemeCommand
+      include CommandHelpers
+
       NAME = :meme
       DESCRIPTION = "Kirim meme acak ke kanal ini.".freeze
       ERROR_MESSAGE = "Maaf, PAL gagal mengambil meme sekarang.".freeze

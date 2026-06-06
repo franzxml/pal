@@ -43,6 +43,7 @@
     │── lib/
     │   ├── pal/
     │   │   ├── commands/
+    │   │   │   ├── command_helpers.rb
     │   │   │   ├── meme_command.rb
     │   │   │   ├── music_command.rb
     │   │   │   ├── play_command.rb
@@ -118,7 +119,7 @@
    Untuk `/musik gabung` dan `/play`, pastikan pengguna sudah berada di voice channel.
    Jika audio sedang diputar, command `/play` berikutnya akan otomatis masuk antrean.
 
-## Script
+## Scripts
 * `npm install` untuk menginstall dependensi runtime Node.js.
 * `npm start` untuk menjalankan PAL dengan dukungan voice DAVE/E2EE.
 * `npm run voice:report` untuk mengecek dependency voice, DAVE, Opus, dan FFmpeg.
@@ -147,8 +148,6 @@ Untuk macOS dengan Homebrew, dependency native dapat diinstall menggunakan:
 brew install yt-dlp ffmpeg opus libsodium
 ```
 
----
+## Pengembang
 
-Dikembangkan oleh:
-
-* @franzxml
+* franzxml

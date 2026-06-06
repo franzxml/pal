@@ -1,8 +1,13 @@
+# frozen_string_literal: true
+
 require "pal/audio_source_resolver"
+require "pal/commands/command_helpers"
 
 module Pal
   module Commands
     class PlayCommand
+      include CommandHelpers
+
       NAME = :play
       DESCRIPTION = "Putar audio dari URL YouTube.".freeze
       URL_OPTION = "url".freeze
@@ -50,26 +55,13 @@ module Pal
       end
 
       def connection_for(event, voice_channel)
-        guild_id = guild_key(event)
-        connection = @voice_registry.fetch(guild_id)
+        key = guild_key(event)
+        connection = @voice_registry.fetch(key)
         return connection if connection
 
         connection = @bot.voice_connect(voice_channel)
-        @voice_registry.register(guild_id, connection)
+        @voice_registry.register(key, connection)
         connection
-      end
-
-      def option_value(event, name)
-        option = event.options[name] || event.options[name.to_sym]
-        option.respond_to?(:value) ? option.value : option
-      end
-
-      def guild_key(event)
-        if event.respond_to?(:server) && event.server
-          event.server.id
-        else
-          event.channel.id
-        end
       end
     end
   end

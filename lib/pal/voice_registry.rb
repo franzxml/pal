@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Pal
   class VoiceRegistry
     def initialize

@@ -8,10 +8,10 @@ module Pal
       include CommandHelpers
 
       NAME = :musik
-      DESCRIPTION = "Kontrol fitur musik PAL.".freeze
-      OPTION_NAME = "aksi".freeze
-      DEFAULT_ACTION = "gabung".freeze
-      ERROR_MESSAGE = "Maaf, PAL gagal menjalankan perintah musik.".freeze
+      DESCRIPTION = "Kontrol fitur musik PAL."
+      OPTION_NAME = "aksi"
+      DEFAULT_ACTION = "gabung"
+      ERROR_MESSAGE = "Maaf, PAL gagal menjalankan perintah musik."
 
       ACTIONS = {
         "gabung" => "Masuk ke voice channel kamu.",
@@ -79,6 +79,7 @@ module Pal
           @voice_registry.register(guild_key(event), connection)
         rescue StandardError => error
           warn "Failed to join voice channel: #{error.class}: #{error.message}"
+          event.channel.send_message("PAL gagal masuk ke voice channel: #{error.message}")
         end
       end
 

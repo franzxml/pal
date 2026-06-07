@@ -9,9 +9,9 @@ module Pal
       include CommandHelpers
 
       NAME = :play
-      DESCRIPTION = "Putar audio dari URL YouTube.".freeze
-      URL_OPTION = "url".freeze
-      ERROR_MESSAGE = "Maaf, PAL gagal memutar audio dari URL itu.".freeze
+      DESCRIPTION = "Putar audio dari URL YouTube."
+      URL_OPTION = "url"
+      ERROR_MESSAGE = "Maaf, PAL gagal memutar audio dari URL itu."
 
       def initialize(bot:, config:, voice_registry:, audio_source_resolver: AudioSourceResolver.new)
         @bot = bot
@@ -51,6 +51,7 @@ module Pal
           connection.play_file(audio_url)
         rescue StandardError => error
           warn "Failed to play YouTube audio: #{error.class}: #{error.message}"
+          event.channel.send_message("PAL gagal memutar audio: #{error.message}")
         end
       end
 

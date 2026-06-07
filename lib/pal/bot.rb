@@ -13,7 +13,7 @@ module Pal
       @bot = Discordrb::Bot.new(
         token: config.token,
         client_id: config.client_id,
-        intents: [:servers, :server_voice_states]
+        intents: %i[servers server_voice_states]
       )
       @voice_registry = VoiceRegistry.new
     end

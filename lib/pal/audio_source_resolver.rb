@@ -7,7 +7,7 @@ module Pal
   class AudioSourceResolver
     class Error < StandardError; end
 
-    YOUTUBE_HOST_PATTERN = /(^|\.)youtu(be\.com|\.be)\z/.freeze
+    YOUTUBE_HOST_PATTERN = /(^|\.)youtu(be\.com|\.be)\z/
 
     def initialize(command: "yt-dlp")
       @command = command

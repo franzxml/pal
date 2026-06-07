@@ -8,7 +8,7 @@ module Pal
       include CommandHelpers
 
       NAME = :stop
-      DESCRIPTION = "Hentikan audio yang sedang diputar PAL.".freeze
+      DESCRIPTION = "Hentikan audio yang sedang diputar PAL."
 
       def initialize(bot:, config:, voice_registry:)
         @bot = bot

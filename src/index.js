@@ -25,7 +25,7 @@ async function registerCommands() {
   await rest.put(Routes.applicationCommands(clientId), { body: commandDefinitions });
 }
 
-client.once("ready", () => {
+client.once("clientReady", () => {
   console.log(`PAL is online as ${client.user.tag}`);
 });
 

@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "misogi.ruby-rubocop",
+    "editorconfig.editorconfig"
+  ]
+}

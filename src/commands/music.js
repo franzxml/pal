@@ -55,6 +55,7 @@ async function handle(interaction) {
     await connectToVoice(interaction);
     await interaction.followUp("PAL sudah masuk ke voice channel.");
   } catch (error) {
+    console.error("Failed to join voice channel:", error);
     await interaction.followUp({ content: `PAL gagal masuk ke voice channel: ${error.message}`, ephemeral: true });
   }
 }

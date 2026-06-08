@@ -30,9 +30,8 @@ async function handle(interaction) {
   await interaction.reply("PAL menambahkan audio YouTube ke antrean.");
 
   try {
-    const connection = await connectToVoice(interaction);
+    await connectToVoice(interaction);
     const session = getSession(key);
-    connection.subscribe(session.player);
     session.queue.push({ interaction, requestedBy: interaction.user.id, url });
 
     if (session.current) {

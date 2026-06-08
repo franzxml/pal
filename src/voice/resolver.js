@@ -60,7 +60,7 @@ async function resolveYouTubeAudio(url) {
     return audioUrl;
   } catch (error) {
     if (error.message === "yt-dlp tidak mengembalikan URL audio.") throw error;
-    throw new Error(parseYtDlpError(error.stderr ?? error.message));
+    throw new Error(parseYtDlpError(error.stderr ?? error.message), { cause: error });
   }
 }
 

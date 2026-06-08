@@ -11,4 +11,5 @@ logs/
 .DS_Store
 Thumbs.db
 .idea/
-.vscode/
+.vscode/*.code-snippets
+.vscode/launch.json

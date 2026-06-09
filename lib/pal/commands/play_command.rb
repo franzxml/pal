@@ -56,13 +56,9 @@ module Pal
       end
 
       def connection_for(event, voice_channel)
-        key = guild_key(event)
-        connection = @voice_registry.fetch(key)
-        return connection if connection
-
-        connection = @bot.voice_connect(voice_channel)
-        @voice_registry.register(key, connection)
-        connection
+        @voice_registry.fetch_or_register(guild_key(event)) do
+          @bot.voice_connect(voice_channel)
+        end
       end
     end
   end

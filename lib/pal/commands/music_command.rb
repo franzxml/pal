@@ -72,11 +72,15 @@ module Pal
           return
         end
 
+        if @voice_registry.connected?(guild_key(event))
+          event.respond(content: "PAL sudah tersambung ke voice channel. Jalankan `/musik keluar` dulu untuk pindah.")
+          return
+        end
+
         event.respond(content: "PAL sedang mencoba masuk ke #{voice_channel.name}.")
 
         Thread.new do
-          connection = @bot.voice_connect(voice_channel)
-          @voice_registry.register(guild_key(event), connection)
+          @voice_registry.fetch_or_register(guild_key(event)) { @bot.voice_connect(voice_channel) }
         rescue StandardError => error
           warn "Failed to join voice channel: #{error.class}: #{error.message}"
           event.channel.send_message("PAL gagal masuk ke voice channel: #{error.message}")

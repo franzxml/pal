@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import { connectToVoice, getSession, playNext } from "../voice/manager.js";
 import { validateYouTubeUrl } from "../voice/resolver.js";
 
@@ -17,12 +17,12 @@ async function handle(interaction) {
   const url = interaction.options.getString("url", true);
 
   if (!validateYouTubeUrl(url)) {
-    await interaction.reply({ content: "URL harus berasal dari YouTube.", ephemeral: true });
+    await interaction.reply({ content: "URL harus berasal dari YouTube.", flags: MessageFlags.Ephemeral });
     return;
   }
 
   if (!interaction.member?.voice?.channel) {
-    await interaction.reply({ content: "Masuk ke voice channel dulu, lalu jalankan `/play` lagi.", ephemeral: true });
+    await interaction.reply({ content: "Masuk ke voice channel dulu, lalu jalankan `/play` lagi.", flags: MessageFlags.Ephemeral });
     return;
   }
 
@@ -41,7 +41,7 @@ async function handle(interaction) {
     await playNext(key);
   } catch (error) {
     console.error("Failed to play YouTube audio:", error);
-    await interaction.followUp({ content: `Gagal memutar audio: ${error.message}`, ephemeral: true });
+    await interaction.followUp({ content: `Gagal memutar audio: ${error.message}`, flags: MessageFlags.Ephemeral });
   }
 }
 

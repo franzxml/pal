@@ -1,5 +1,5 @@
 import { readdirSync } from "node:fs";
-import { Client, GatewayIntentBits, REST, Routes } from "discord.js";
+import { Client, GatewayIntentBits, MessageFlags, REST, Routes } from "discord.js";
 import { token, clientId, guildId } from "./config.js";
 
 const COMMAND_HANDLERS = new Map();
@@ -39,7 +39,7 @@ client.on("interactionCreate", async (interaction) => {
     await handle(interaction);
   } catch (error) {
     console.error(`Failed to handle /${interaction.commandName}:`, error);
-    const message = { content: "Maaf, PAL gagal menjalankan command itu.", ephemeral: true };
+    const message = { content: "Maaf, PAL gagal menjalankan command itu.", flags: MessageFlags.Ephemeral };
     if (interaction.replied || interaction.deferred) {
       await interaction.followUp(message);
     } else {

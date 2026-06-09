@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import { findSession } from "../voice/manager.js";
 
 const definition = new SlashCommandBuilder()
@@ -9,7 +9,7 @@ const definition = new SlashCommandBuilder()
 async function handle(interaction) {
   const session = findSession(interaction.guildId);
   if (!session || (!session.current && session.queue.length === 0)) {
-    await interaction.reply({ content: "Antrean PAL masih kosong.", ephemeral: true });
+    await interaction.reply({ content: "Antrean PAL masih kosong.", flags: MessageFlags.Ephemeral });
     return;
   }
 
@@ -27,7 +27,7 @@ async function handle(interaction) {
     lines.push("Tidak ada antrean berikutnya.");
   }
 
-  await interaction.reply({ content: lines.join("\n\n"), ephemeral: true });
+  await interaction.reply({ content: lines.join("\n\n"), flags: MessageFlags.Ephemeral });
 }
 
 export { definition, handle };

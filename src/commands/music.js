@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import { connectToVoice, getConnection, findSession, destroySession } from "../voice/manager.js";
 
 const definition = new SlashCommandBuilder()
@@ -24,20 +24,20 @@ async function handle(interaction) {
   if (action === "status") {
     const connection = getConnection(key);
     if (!connection) {
-      await interaction.reply({ content: "PAL belum tersambung ke voice channel.", ephemeral: true });
+      await interaction.reply({ content: "PAL belum tersambung ke voice channel.", flags: MessageFlags.Ephemeral });
       return;
     }
     const session = findSession(key);
     const queueLength = session?.queue.length ?? 0;
     const status = session?.current ? "sedang memutar audio" : "tidak sedang memutar audio";
-    await interaction.reply({ content: `PAL tersambung dan ${status}. Antrean: ${queueLength}.`, ephemeral: true });
+    await interaction.reply({ content: `PAL tersambung dan ${status}. Antrean: ${queueLength}.`, flags: MessageFlags.Ephemeral });
     return;
   }
 
   if (action === "keluar") {
     const connection = getConnection(key);
     if (!connection) {
-      await interaction.reply({ content: "PAL belum tersambung ke voice channel di server ini.", ephemeral: true });
+      await interaction.reply({ content: "PAL belum tersambung ke voice channel di server ini.", flags: MessageFlags.Ephemeral });
       return;
     }
     destroySession(key);
@@ -46,7 +46,7 @@ async function handle(interaction) {
   }
 
   if (!interaction.member?.voice?.channel) {
-    await interaction.reply({ content: "Masuk ke voice channel dulu, lalu jalankan `/musik gabung` lagi.", ephemeral: true });
+    await interaction.reply({ content: "Masuk ke voice channel dulu, lalu jalankan `/musik gabung` lagi.", flags: MessageFlags.Ephemeral });
     return;
   }
 
@@ -56,7 +56,7 @@ async function handle(interaction) {
     await interaction.followUp("PAL sudah masuk ke voice channel.");
   } catch (error) {
     console.error("Failed to join voice channel:", error);
-    await interaction.followUp({ content: `PAL gagal masuk ke voice channel: ${error.message}`, ephemeral: true });
+    await interaction.followUp({ content: `PAL gagal masuk ke voice channel: ${error.message}`, flags: MessageFlags.Ephemeral });
   }
 }
 

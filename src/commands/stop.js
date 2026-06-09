@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import { stopPlayback } from "../voice/manager.js";
 
 const definition = new SlashCommandBuilder()
@@ -8,7 +8,7 @@ const definition = new SlashCommandBuilder()
 
 async function handle(interaction) {
   if (!stopPlayback(interaction.guildId)) {
-    await interaction.reply({ content: "Tidak ada audio yang sedang diputar.", ephemeral: true });
+    await interaction.reply({ content: "Tidak ada audio yang sedang diputar.", flags: MessageFlags.Ephemeral });
     return;
   }
 

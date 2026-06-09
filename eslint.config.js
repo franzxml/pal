@@ -15,6 +15,7 @@ export default [
       "no-var": "error",
       "prefer-const": "error",
       "eqeqeq": ["error", "always"],
+      "preserve-caught-error": "error",
     },
   },
 ];

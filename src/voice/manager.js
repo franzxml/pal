@@ -10,6 +10,8 @@ import {
 import { resolveYouTubeAudio } from "./resolver.js";
 
 const IDLE_TIMEOUT_MS = 5 * 60 * 1000;
+const READY_TIMEOUT_MS = 20_000;
+const RECONNECT_GRACE_MS = 5_000;
 
 const connections = new Map();
 const sessions = new Map();
@@ -57,6 +59,39 @@ function scheduleIdleDisconnect(key, session) {
   }, IDLE_TIMEOUT_MS);
 }
 
+function cleanupSession(key) {
+  const session = sessions.get(key);
+  if (!session) return;
+  clearTimeout(session.idleTimer);
+  session.queue = [];
+  session.current = null;
+  session.player.stop(true);
+  sessions.delete(key);
+}
+
+function registerConnectionHandlers(key, connection) {
+  connection.on(VoiceConnectionStatus.Disconnected, async () => {
+    // Disconnected bisa bersifat sementara (misal bot dipindah channel).
+    // Beri waktu singkat untuk pulih; jika tidak, hancurkan koneksi.
+    try {
+      await Promise.race([
+        entersState(connection, VoiceConnectionStatus.Signalling, RECONNECT_GRACE_MS),
+        entersState(connection, VoiceConnectionStatus.Connecting, RECONNECT_GRACE_MS),
+      ]);
+    } catch (error) {
+      console.error("Voice connection did not recover, destroying:", error);
+      if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+        connection.destroy();
+      }
+    }
+  });
+
+  connection.on(VoiceConnectionStatus.Destroyed, () => {
+    connections.delete(key);
+    cleanupSession(key);
+  });
+}
+
 async function connectToVoice(interaction) {
   const voiceChannel = interaction.member?.voice?.channel;
   if (!voiceChannel) {
@@ -79,22 +114,34 @@ async function connectToVoice(interaction) {
     selfDeaf: false,
   });
 
-  await entersState(connection, VoiceConnectionStatus.Ready, 20_000);
-  connections.set(key, connection);
-
-  connection.on(VoiceConnectionStatus.Disconnected, () => {
-    connections.delete(key);
-    const session = sessions.get(key);
-    if (session) {
-      clearTimeout(session.idleTimer);
-      session.queue = [];
-      session.current = null;
-      session.player.stop(true);
-      sessions.delete(key);
+  try {
+    await entersState(connection, VoiceConnectionStatus.Ready, READY_TIMEOUT_MS);
+  } catch (error) {
+    if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+      connection.destroy();
     }
-  });
+    throw new Error("PAL tidak berhasil tersambung ke voice channel. Coba lagi.", { cause: error });
+  }
+
+  // joinVoiceChannel mengembalikan koneksi yang sama untuk guild yang sama,
+  // jadi pemanggilan bersamaan tidak boleh mendaftarkan handler dua kali.
+  if (!connections.has(key)) {
+    connections.set(key, connection);
+    registerConnectionHandlers(key, connection);
+    scheduleIdleDisconnect(key, getSession(key));
+  }
 
   return connection;
+}
+
+async function notifyTrack(track, content) {
+  // Token interaction kedaluwarsa setelah 15 menit; kegagalan notifikasi
+  // tidak boleh menghentikan antrean.
+  try {
+    await track.interaction.followUp(content);
+  } catch (error) {
+    console.error("Failed to send queue notification:", error);
+  }
 }
 
 async function playNext(key) {
@@ -119,29 +166,37 @@ async function playNext(key) {
     const resource = createAudioResource(audioUrl);
     connection.subscribe(session.player);
     session.player.play(resource);
-    await track.interaction.followUp(`PAL mulai memutar audio. Sisa antrean: ${session.queue.length}.`);
   } catch (error) {
     console.error("Failed to play queued YouTube audio:", error);
     session.current = null;
-    await track.interaction.followUp(`Gagal memutar audio: ${error.message}`);
+    await notifyTrack(track, `Gagal memutar audio: ${error.message}`);
     await playNext(key);
+    return;
   }
+
+  await notifyTrack(track, `PAL mulai memutar audio. Sisa antrean: ${session.queue.length}.`);
+}
+
+function stopPlayback(key) {
+  const session = sessions.get(key);
+  if (!session || (!session.current && session.queue.length === 0)) {
+    return false;
+  }
+
+  session.queue = [];
+  session.current = null;
+  session.player.stop(true);
+  scheduleIdleDisconnect(key, session);
+  return true;
 }
 
 function destroySession(key) {
-  const session = sessions.get(key);
-  if (session) {
-    clearTimeout(session.idleTimer);
-    session.queue = [];
-    session.current = null;
-    session.player.stop(true);
-    sessions.delete(key);
-  }
+  cleanupSession(key);
   const connection = connections.get(key);
-  if (connection) {
+  connections.delete(key);
+  if (connection && connection.state.status !== VoiceConnectionStatus.Destroyed) {
     connection.destroy();
-    connections.delete(key);
   }
 }
 
-export { findSession, getSession, getConnection, connectToVoice, playNext, destroySession };
+export { findSession, getSession, getConnection, connectToVoice, playNext, stopPlayback, destroySession };

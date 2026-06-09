@@ -3,6 +3,8 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
+const ALLOWED_PROTOCOLS = new Set(["http:", "https:"]);
+
 const YOUTUBE_HOSTS = new Set([
   "youtube.com",
   "www.youtube.com",
@@ -29,21 +31,34 @@ function parseYtDlpError(stderr) {
   return "yt-dlp gagal mengambil audio dari video tersebut.";
 }
 
+const INVALID_URL_MESSAGE = "URL harus berasal dari YouTube.";
+
+function parseYouTubeUrl(url) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch (error) {
+    throw new Error(INVALID_URL_MESSAGE, { cause: error });
+  }
+
+  if (!ALLOWED_PROTOCOLS.has(parsed.protocol) || !YOUTUBE_HOSTS.has(parsed.hostname.toLowerCase())) {
+    throw new Error(INVALID_URL_MESSAGE);
+  }
+
+  return parsed;
+}
+
 function validateYouTubeUrl(url) {
   try {
-    const parsed = new URL(url);
-    return YOUTUBE_HOSTS.has(parsed.hostname.toLowerCase());
+    parseYouTubeUrl(url);
+    return true;
   } catch {
     return false;
   }
 }
 
 async function resolveYouTubeAudio(url) {
-  const parsed = new URL(url);
-  const host = parsed.hostname.toLowerCase();
-  if (!YOUTUBE_HOSTS.has(host)) {
-    throw new Error("URL harus berasal dari YouTube.");
-  }
+  const parsed = parseYouTubeUrl(url);
 
   try {
     const { stdout } = await execFileAsync(

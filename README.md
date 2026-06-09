@@ -21,29 +21,30 @@
 ## Struktur Folder
 
 ```
-bin/
-  pal                    Entry point CLI untuk menjalankan bot Ruby
-lib/
-  pal/                   Implementasi Ruby (discordrb)
-    commands/            Handler slash command Ruby
-src/
-  index.js               Entry point Node.js
-  config.js              Semua env var terpusat
-  commands/
-    meme.js              Handler /meme
-    music.js             Handler /musik
-    play.js              Handler /play
-    stop.js              Handler /stop
-    queue.js             Handler /queue
-  voice/
-    manager.js           Connection & session management, playNext
-    resolver.js          resolveYouTubeAudio, validasi URL YouTube
-test/
-  pal/                   Test suite Minitest untuk implementasi Ruby
-Gemfile                  Dependency Ruby
-package.json             Dependency Node.js
-Rakefile                 Task runner (default: jalankan test suite Ruby)
-.env.example             Template environment variable
+pal/
+|-- bin/
+|   `-- pal                Entry point CLI untuk menjalankan bot Ruby
+|-- lib/
+|   `-- pal/               Implementasi Ruby (discordrb)
+|       `-- commands/      Handler slash command Ruby
+|-- src/
+|   |-- commands/
+|   |   |-- meme.js        Handler /meme
+|   |   |-- music.js       Handler /musik
+|   |   |-- play.js        Handler /play
+|   |   |-- queue.js       Handler /queue
+|   |   `-- stop.js        Handler /stop
+|   |-- voice/
+|   |   |-- manager.js     Connection & session management, playNext
+|   |   `-- resolver.js    resolveYouTubeAudio, validasi URL YouTube
+|   |-- config.js          Semua env var terpusat
+|   `-- index.js           Entry point Node.js
+|-- test/
+|   `-- pal/               Test suite Minitest untuk implementasi Ruby
+|-- .env.example           Template environment variable
+|-- Gemfile                Dependency Ruby
+|-- Rakefile               Task runner (default: jalankan test suite Ruby)
+`-- package.json           Dependency Node.js
 ```
 
 ## Cara Menjalankan

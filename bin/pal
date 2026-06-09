@@ -3,9 +3,12 @@
 
 $LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
 
-begin
-  require "dotenv/load"
-rescue LoadError # rubocop:disable Lint/SuppressedException
+unless ENV["APP_ENV"] == "production"
+  begin
+    require "dotenv/load"
+  rescue LoadError
+    # dotenv opsional; tanpa gem ini, environment variable harus di-set dari luar.
+  end
 end
 
 require "pal/bot"

@@ -9,5 +9,6 @@
   "eslint.validate": ["javascript"],
   "[ruby]": {
     "editor.defaultFormatter": "misogi.ruby-rubocop"
-  }
+  },
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

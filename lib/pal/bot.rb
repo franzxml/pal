@@ -4,6 +4,7 @@ require "discordrb"
 
 require "pal/commands"
 require "pal/config"
+require "pal/queue_registry"
 require "pal/voice_registry"
 
 module Pal
@@ -16,6 +17,7 @@ module Pal
         intents: %i[servers server_voice_states]
       )
       @voice_registry = VoiceRegistry.new
+      @queue_registry = QueueRegistry.new
     end
 
     def run
@@ -28,8 +30,12 @@ module Pal
     def register_commands
       Commands::MemeCommand.new(bot: @bot, config: @config).register
       Commands::MusicCommand.new(bot: @bot, config: @config, voice_registry: @voice_registry).register
-      Commands::PlayCommand.new(bot: @bot, config: @config, voice_registry: @voice_registry).register
-      Commands::StopCommand.new(config: @config, bot: @bot, voice_registry: @voice_registry).register
+      Commands::PlayCommand.new(
+        bot: @bot, config: @config, voice_registry: @voice_registry, queue_registry: @queue_registry
+      ).register
+      Commands::StopCommand.new(
+        bot: @bot, config: @config, voice_registry: @voice_registry, queue_registry: @queue_registry
+      ).register
       register_ready_log
     end
 
